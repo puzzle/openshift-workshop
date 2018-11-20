@@ -114,7 +114,7 @@ The image is (by default) stored in your namespace in an `ImageStream` called `B
 
 Example:
 
-`oc new-build httpd --name kt-static-site --binary`
+`oc new-build registry.access.redhat.com/rhscl/httpd-24-rhel7 --name kt-static-site --binary`
 
 `oc start-build kt-static-site --from-dir=. --follow`
 
@@ -163,11 +163,11 @@ https://docs.openshift.com/container-platform/3.7/rest_api/apis-build.openshift.
 
 ## Openshift: Build examples (1)
 
-`oc new-build httpd --name kt-static-site --binary`
+`oc new-build registry.access.redhat.com/rhscl/httpd-24-rhel7 --name kt-static-site --binary`
 
 `oc start-build kt-static-site --from-dir=. --follow`
 
-* Builder image: httpd
+* Builder image: registry.access.redhat.com/rhscl/httpd-24-rhel7
 * Source: local directory `.`
 * Strategy: source
 

@@ -42,7 +42,7 @@ https://OPENSHIFT-NODE/console/command-line
 
 ### Create a new build
 
-`oc new-build --binary httpd --name static-site`
+`oc new-build --binary registry.access.redhat.com/rhscl/httpd-24-rhel7 --name static-site`
 
 ----
 
@@ -110,10 +110,14 @@ CMD node server.js
 const http = require('http')
 http.createServer(function (req, res) {
   console.log(new Date(), req.method, req.url)
+
   res.writeHead(200, {'Content-Type': 'text/plain'})
-  res.end(process.env.HELLO_MSG || 'Hello! Please try to set the environment variable: HELLO_MSG!')
+
+  res.end(process.env.HELLO_MSG || 
+    'Hello! Please try to set the environment variable: HELLO_MSG!')
 }).listen(8080)
-console.log('Server listening on :8080')
+
+console.log('Server listening on :8080...')
 ```
 
 ----
@@ -179,3 +183,21 @@ This will also trigger a new deployment.
 ### Connect to your db using your favourite client
 
 psql://localhost:5432
+
+---
+
+## Exercise 5: `oc new-app`
+
+`oc new-app` is a command to create whole applications (is, bc, dc, svc, pvc, ...).
+The behaviour depends on the input.
+
+----
+
+Possible inputs:
+
+* Image `oc new-app registry.access.redhat.com/rhscl/httpd-24-rhel7`
+* ImageStream `oc new-app -i static-site`
+* ImageStreamTag `oc new-app -i static-site:prod`
+* Template `oc new-app --template=postgres-ephemeral ...`
+* Remote Git Repo `oc new-app https://github.com/tran-engineering/openshift-workshop-nodejs-example --name myapp`
+* Local source files `oc new-app myapp`
