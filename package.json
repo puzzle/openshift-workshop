@@ -1,0 +1,30 @@
+{
+  "name": "springboot-workshop-2018",
+  "version": "1.0.0",
+  "description": "Spring Boot Workshop",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "reveal-md src --watch --theme https://keetraxx.github.io/pitc-revealjs-theme/puzzle.css  --scripts src/scripts/code-copy.js",
+    "localtheme": "reveal-md src --watch --theme puzzle.css --scripts src/scripts/code-copy.js",
+    "build": "for FILE in src/*.md; do reveal-md $FILE --static dist/$(basename $FILE) --theme https://keetraxx.github.io/pitc-revealjs-theme/puzzle.css --scripts src/scripts/code-copy.js; done"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KeeTraxx/springboot-workshop-2018.git"
+  },
+  "keywords": [
+    "Spring",
+    "Spring",
+    "Boot"
+  ],
+  "author": "Khôi Tran <tran@puzzle.ch>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/KeeTraxx/springboot-workshop-2018/issues"
+  },
+  "homepage": "https://github.com/KeeTraxx/springboot-workshop-2018#readme",
+  "dependencies": {
+    "reveal-md": "^2.1.0"
+  }
+}

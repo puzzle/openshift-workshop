@@ -1,0 +1,7 @@
+{
+  "controls": true,
+  "progress": true,
+  "slideNumber": true,
+  "touch": true,
+  "transition": "concave"
+}
