@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "reveal-md src --watch --theme https://keetraxx.github.io/pitc-revealjs-theme/puzzle.css  --scripts src/scripts/code-copy.js",
     "localtheme": "reveal-md src --watch --theme puzzle.css --scripts src/scripts/code-copy.js",
-    "build": "echo '<!doctype html><html><head><title>Listing</title></head><body>' > dist/index.html; for FILE in src/*.md; do echo \"<a href=\\\"$(basename $FILE)\\\">$(basename $FILE)</a>\" >> dist/index.html; reveal-md $FILE --static dist/$(basename $FILE) --assets-dir=assets --theme https://keetraxx.github.io/pitc-revealjs-theme/puzzle.css --scripts src/scripts/code-copy.js; done; echo '</body></html>' >> dist/index.html"
+    "build": "[ -e dist] || mkdir dist; echo '<!doctype html><html><head><title>Listing</title></head><body>' > dist/index.html; for FILE in src/*.md; do echo \"<a href=\\\"$(basename $FILE)\\\">$(basename $FILE)</a>\" >> dist/index.html; reveal-md $FILE --static dist/$(basename $FILE) --assets-dir=assets --theme https://keetraxx.github.io/pitc-revealjs-theme/puzzle.css --scripts src/scripts/code-copy.js; done; echo '</body></html>' >> dist/index.html"
   },
   "repository": {
     "type": "git",
