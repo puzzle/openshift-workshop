@@ -1,7 +1,7 @@
 {
-  "name": "springboot-workshop-2018",
+  "name": "openshift-workshop",
   "version": "1.0.0",
-  "description": "Spring Boot Workshop",
+  "description": "Openshift Workshop",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -11,19 +11,18 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/KeeTraxx/springboot-workshop-2018.git"
+    "url": "git+https://github.com/puzzle/openshift-workshop"
   },
   "keywords": [
-    "Spring",
-    "Spring",
-    "Boot"
+    "Openshift",
+    "Workshop"
   ],
   "author": "Khôi Tran <tran@puzzle.ch>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/KeeTraxx/springboot-workshop-2018/issues"
+    "url": "https://github.com/puzzle/openshift-workshop/issues"
   },
-  "homepage": "https://github.com/KeeTraxx/springboot-workshop-2018#readme",
+  "homepage": "https://github.com/puzzle/openshift-workshop#readme",
   "dependencies": {
     "reveal-md": "^2.3.0"
   }
