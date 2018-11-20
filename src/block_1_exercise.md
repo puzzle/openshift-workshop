@@ -142,6 +142,40 @@ Try to do it yourself! See Exercise 2.
 
 This will also trigger a new deployment.
 
+----
+
+### Use the web console to see your environment variable
+
+### Use `oc rsh` to get a shell
+
+`oc get pods -l app=nodejs-example`
+
+`oc rsh nodejs-example-x-xxxxx`
+
+`env`
+
 ---
 
-## Exercise 4: http://time.puzzle.ch/
+## Exercise 4: Interacting with pods
+
+### Create a PostgreSQL deployment
+
+`oc new-app --template=postgresql-ephemeral -p POSTGRESQL_USER=sampledb -p POSTGRESQL_PASSWORD=samplepass`
+
+### Open a `psql` shell
+
+`oc get pods -l app=postgres-ephemeral`
+
+`oc rsh postgresql-x-xxxxx`
+
+`psql sampledb`
+
+----
+
+### Port forwarding to your local machine
+
+`oc port-forward postgresql-x-xxxxx 5432:5432`
+
+### Connect to your db using your favourite client
+
+psql://localhost:5432

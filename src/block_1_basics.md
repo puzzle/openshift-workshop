@@ -35,6 +35,7 @@
 * *Openshift* Build, BuildConfiguration
 * *Openshift* Deployment, DeploymentConfiguration, Pod, ReplicationController
 * *Openshift* Services, Routes
+* *Openshift* Persistent Volume (Claim)
 * *Openshift* Templates
 
 ---
