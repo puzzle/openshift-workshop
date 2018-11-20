@@ -10,7 +10,7 @@
 
 ### Install the Openshift Client (oc)
 
-https://<OPENSHIFT-NODE>/console/command-line
+https://OPENSHIFT-NODE/console/command-line
 
 ### Best practices
 
@@ -32,9 +32,9 @@ https://<OPENSHIFT-NODE>/console/command-line
 
 `oc login`
 
-`oc new-project <USERNAME>-sandbox` (only if you have rights)
+`oc new-project USERNAME-sandbox` (only if you have rights)
 
-`oc project <USERNAME>-sandbox`
+`oc project USERNAME-sandbox`
 
 ---
 
