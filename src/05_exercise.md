@@ -1,21 +1,17 @@
-# Openshift Workshop
+# Openshift Workshop: Template Exercises
 
-<small>04.10.2018 - tran@puzzle.ch</small>
+<small>tran@puzzle.ch</small>
 
 <!-- .slide: class="master01" -->
 
 ---
 
-## Openshift Templates: Exercises
-
----
-
-## Exercise 1: List all templates
+## Exercise 1: List all templates provided by the openshift platform
 
 `oc get templates -n openshift`
 
 Those templates are the same as you can see on the web console.
-An Openshift Cluster-Admin can add new templates to the *openshift* Namespace.
+An Openshift Cluster-Admin can add new templates to the **openshift** namespace.
 
 ---
 
@@ -57,9 +53,9 @@ Use this to do *"dry-run"* and analyze what Openshift would create.
 
 Clean up your project (`oc delete all --all`)
 
-`oc new-app https://github.com/tran-engineering/openshift-workshop-nodejs-example.git --name=myapp HELLO_MSG="Thanks for all the fish!"`
+`oc new-app https://github.com/tran-engineering/openshift-workshop-nodejs-example.git --name=myapp HELLO_MSG="Thanks for all the fish"`
 
-`oc export svc,dc,bc,is -l app=myapp -o yaml --as-template=myapp-template > myapp-template.yaml`
+`oc export --raw svc,dc,bc,is -l app=myapp -o yaml --as-template=myapp-template > myapp-template.yaml`
 
 ----
 
@@ -94,6 +90,52 @@ Cleanup your current project:
 
 `oc delete all --all`
 
-Rebuild it using template:
+----
 
-`oc process -f myapp-template.yaml -p MESSAGE=hey | oc create -f -`
+## Double check your template
+
+Check to see if the parameters block is working:
+`oc process -f myapp-template.yaml --parameters`
+
+Check to see if the parameters are set:
+`oc process -f myapp-template.yaml -p MESSAGE="This message is set by a template parameter" | grep -C 5 HELLO_MSG`
+
+----
+
+## Rebuild it using template:
+
+`oc process -f myapp-template.yaml -p MESSAGE="This message is set by a template parameter" | oc create -f -`
+
+Manually start a build (builds aren't triggered on import):
+
+`oc start-build myapp`
+
+---
+
+## Exercise 7: Have a look at other templates
+
+* django-psql-example
+* dotnet-example
+* mariadb-ephemeral
+* mongodb-ephemeral
+* mysql-ephemeral
+* nodejs-mongodb-example
+* postgresql-ephemeral
+* rails-postgresql-example
+
+----
+
+Look at template parameters:
+
+`oc process openshift//django-psql-example --parameters`
+
+Create the resources:
+
+`oc process openshift//django-psql-example | oc create -f`
+
+or shorthand
+
+`oc new-app --template=django-psql-example`
+
+---
+

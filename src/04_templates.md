@@ -1,6 +1,6 @@
-# Openshift Workshop
+# Openshift Workshop: Templates
 
-<small>04.10.2018 - tran@puzzle.ch</small>
+<small>tran@puzzle.ch</small>
 
 <!-- .slide: class="master01" -->
 
@@ -16,7 +16,7 @@ A template describes a **set of objects** that can be **parameterized** and **pr
 
 ## Base MO
 
-Template + User provided parameters => IS, BC, DC, Routes, etc...
+Template + User provided parameters => IS, BC, DC, Routes, Secrets, ...
 
 ---
 
@@ -25,13 +25,16 @@ Template + User provided parameters => IS, BC, DC, Routes, etc...
 * Restrict what users can customize
 * Simplify creation of multiple objects at the same time
 * Tightly control and configure objects attributes
+* Allow creation of complex setups using the web console
 
 ---
 
 ## When to use templates?
 
 * Creation of a single service (like a DB)
-* Creation of a whole working application
+
+* Creation of a whole working application stacks
+
 * Creation of builds/imagestreams: e.g. https://github.com/tmds/dotnet-mssql-ex/
 
 ---

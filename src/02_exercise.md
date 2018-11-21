@@ -1,6 +1,6 @@
-# Openshift Workshop: Exercise Block
+# Openshift Workshop: Exercise
 
-<small>04.10.2018 - tran@puzzle.ch</small>
+<small>tran@puzzle.ch</small>
 
 <!-- .slide: class="master01" -->
 
@@ -10,13 +10,15 @@
 
 ### Install the Openshift Client (oc)
 
-https://OPENSHIFT-NODE/console/command-line
+https://console.os1.balgroupit.com/console/command-line
+
+---
 
 ### Best practices
 
-* Put it in your PATH
-* Have a working git binary (proxy settings!)
-* Bash completion: `sudo sh -c "oc completion bash > /etc/bash_completion.d/oc"`
+* Put it in your **PATH**
+* Have a working **git** binary (proxy settings!)
+* Bash/zsh completion: `oc completion --help`
 
 ---
 
@@ -32,15 +34,15 @@ https://OPENSHIFT-NODE/console/command-line
 
 `oc login`
 
-`oc new-project USERNAME-sandbox` (only if you have rights)
+`oc new-project workshop-USERNAME` (only if you have rights)
 
-`oc project USERNAME-sandbox`
+`oc project workshop-USERNAME`
 
 ---
 
-## Exercise 2: Create a source build + binary deployment
+## Exercise 2: Create a BuildConfig + binary deployment
 
-### Create a new build
+### Create a new BuildConfig
 
 `oc new-build --binary registry.access.redhat.com/rhscl/httpd-24-rhel7 --name static-site`
 
@@ -55,6 +57,8 @@ https://OPENSHIFT-NODE/console/command-line
 ### Build an image from source
 
 `oc start-build static-site --from-dir=static-site --follow`
+
+Resulting image will be pushed to *static-site:latest*
 
 ----
 
@@ -74,19 +78,23 @@ https://OPENSHIFT-NODE/console/command-line
 
 ### Show the generated URL
 
-`oc get route/static-site`
+`oc describe route/static-site`
 
-### Use your browser to check the URL
+... visit that URL using your browser!
 
-Something among the lines:
+----
 
-https://static-site-kt-sandbox.OPENSHIFT-NODE/
+### Shorthand to create BuildConfig + start build --from-dir=.
+
+`oc new-build registry.access.redhat.com/rhscl/httpd-24-rhel7~. --name=static-site`
 
 ---
 
 ## Exercise 3: Create a Dockerfile build + binary deployment
 
 ### Create a Dockerfile
+
+`mkdir nodejs-app; cd nodejs-app`
 
 ```Dockerfile
 # Base RHEL image
@@ -122,11 +130,11 @@ console.log('Server listening on :8080...')
 
 ----
 
-### Create a build
+### Create a BuildConfig + start a Build
 
-`oc new-build . --name nodejs-example`
+`oc new-build . --name nodejs-app`
 
-`oc start-build nodejs-example --from-dir=. --follow`
+`oc start-build nodejs-app --from-dir=. --follow`
 
 ----
 
@@ -142,7 +150,7 @@ Try to do it yourself! See Exercise 2.
 
 ### Change environment variables
 
-`oc env dc/nodejs-example HELLO_MSG="Hello! I am an enviromentalist!"`
+`oc set env dc/nodejs-example HELLO_MSG="Hello! I am an enviromentalist!"`
 
 This will also trigger a new deployment.
 
@@ -166,7 +174,9 @@ This will also trigger a new deployment.
 
 `oc new-app --template=postgresql-ephemeral -p POSTGRESQL_USER=sampledb -p POSTGRESQL_PASSWORD=samplepass`
 
-### Open a `psql` shell
+----
+
+### Open a **psql** shell
 
 `oc get pods -l app=postgres-ephemeral`
 
@@ -201,3 +211,20 @@ Possible inputs:
 * Template `oc new-app --template=postgres-ephemeral ...`
 * Remote Git Repo `oc new-app https://github.com/tran-engineering/openshift-workshop-nodejs-example --name myapp`
 * Local source files `oc new-app myapp`
+
+---
+
+## Exercise 6: Private git repository
+
+Create a secret:
+`oc create secret generic --type='kubernetes.io/basic-auth' --from-literal=username=kaynewest --from-literal=password=00000000 bitbucket`
+
+----
+
+Create bc+dc using `oc new-app`:
+`oc new-app --source-secret=bitbucket httpd~https://bitbucket.balgroupit.com/scm/ows/static-site.git`
+
+----
+
+Create only bc using `oc new-build`:
+`oc new-build httpd~https://bitbucket.balgroupit.com/scm/ows/static-site.git --source-secret=bitbucket --name=anothersite`

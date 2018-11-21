@@ -1,8 +1,21 @@
 # Openshift Workshop
 
-<small>04.10.2018 - tran@puzzle.ch</small>
+<small>tran@puzzle.ch</small>
 
 <!-- .slide: class="master01" -->
+
+---
+
+## Workshop resources
+
+https://puzzle.github.io/openshift-workshop
+
+---
+
+## Goals
+
+* Learn about basics
+* Gain experience working with **your** Openshift platform
 
 ---
 
@@ -12,16 +25,22 @@
 
 * Introduction
 * Openshift: Basics
-* Openshift: Basic Exercises
+* Exercises: Openshift Basics
 * Openshift: S2I Builds
 * Openshift: Templates
+* Exercises: Openshift S2I / Templates
+
+<!-- .slide: class="master02" -->
+
+----
 
 ### Day 2
 
+* Jenkins
 * CI/CD
-* ...
+* Openshift + JBoss EAP
 
-<!-- .slide: class="master02" -->
+<!-- .slide: class="master03" -->
 
 ---
 
@@ -31,12 +50,11 @@
 
 ## Openshift: Basics
 
-* *Openshift* Image, ImageStream, ImageStreamTag, ImageStreamImage
+* *Openshift* ImageStream, ImageStreamImage, ImageStreamTag
 * *Openshift* Build, BuildConfiguration
-* *Openshift* Deployment, DeploymentConfiguration, Pod, ReplicationController
+* *Openshift* Deployment, DeploymentConfiguration, Pod
 * *Openshift* Services, Routes
-* *Openshift* Persistent Volume (Claim)
-* *Openshift* Templates
+* *Openshift* Secrets
 
 ---
 
@@ -50,19 +68,13 @@ Roughly comparable to Docker Image Repository.
 
 ----
 
-## Openshift: ImageStreamImage
-
-`ImageStreamImage`s are referenced by a uuid.
-
-----
-
 ## Openshift: ImageStreamTag
 
-In practice, you will usually reference a `ImageStreamImage` by one of its `ImageStreamTag`s.
+In practice, you will usually reference a `ImageStreamImage` by one of its `ImageStreamTag`
 
 Commonly used tags:
 
-* `latest` - builds use this tag by default.
+* `latest` - builds tag this by default
 * `dev`
 * `test`
 * `1.0.6`
@@ -76,9 +88,8 @@ Commonly used tags:
 * Dockerhub images are usually not compatible (main reason: Openshift images won't run as root!)
 
 * Openshift compatible images by RedHat https://access.redhat.com/containers/
-* Get a openshift compatible image from one of your trusted docker registries.
-* Openshift Build: Dockerfile
-* Openshift Build: S2I
+* Your private registry
+* Openshift builds: Dockerfile (`--strategy=docker`), S2I (`--strategy=source`)
 
 ----
 
@@ -86,13 +97,14 @@ Commonly used tags:
 
 https://docs.openshift.com/container-platform/3.11/creating_images/guidelines.html
 
+----
+
 Take outs:
 
-* Openshift won't run as root user
-* Support arbitary user ids
-* Openshift specific meta data with `LABEL`
+* Openshift won't run images as root (uid=0)
+* Support arbitary user ids in your images
 * Log to stdout (not in files)
-* Liveness and Readiness probes
+* Support Liveness and Readiness probes
 * Consider providing a template for your images
 
 ----
@@ -105,6 +117,8 @@ Take outs:
 
 `oc delete is/my-image-stream`
 
+`oc describe -n openshift is/httpd`
+
 ---
 
 ## Openshift: Builds
@@ -112,11 +126,19 @@ Take outs:
 An Openshift build results in an image.
 The image is (by default) stored in your namespace in an `ImageStream` called `BUILDNAME:latest`
 
-Example:
+----
 
-`oc new-build registry.access.redhat.com/rhscl/httpd-24-rhel7 --name kt-static-site --binary`
+### Example:
 
-`oc start-build kt-static-site --from-dir=. --follow`
+Create a BuildConfig:
+
+`oc new-build registry.access.redhat.com/rhscl/httpd-24-rhel7 --name static-site --binary`
+
+----
+
+Trigger a build:
+
+`oc start-build static-site --from-dir=. --follow`
 
 Will build an image and store in the `ImageStream` "kt-static-site" and tag it with "latest".
 
@@ -135,7 +157,7 @@ An Openshift Build *ALWAYS* consists of:
 
 * Output Target (`ImageStream` or external Docker registry)
 * Environment Variables used during build
-* Triggers
+* Triggers (BuildConfig change, BuilderImage Change, Webhooks)
 
 ----
 
@@ -148,8 +170,8 @@ https://docs.openshift.com/online/dev_guide/builds/triggering_builds.html
 
 ## Openshift Build: Build strategies
 
-* source (S2I build - will look for S2I scripts)
-* docker (will look for Dockerfile in source)
+* source (S2I build, requires a S2I compatible builder image)
+* docker (will look for a provided `Dockerfile` in source or inline)
 * pipeline (inline Jenkins pipeline)
 
 ----
@@ -163,7 +185,7 @@ https://docs.openshift.com/container-platform/3.7/rest_api/apis-build.openshift.
 
 ## Openshift: Build examples (1)
 
-`oc new-build registry.access.redhat.com/rhscl/httpd-24-rhel7 --name kt-static-site --binary`
+`oc new-build registry.access.redhat.com/rhscl/httpd-24-rhel7 --name static-site --binary`
 
 `oc start-build kt-static-site --from-dir=. --follow`
 
@@ -175,13 +197,13 @@ https://docs.openshift.com/container-platform/3.7/rest_api/apis-build.openshift.
 
 ## Openshift: Build examples (2)
 
-`oc new-build https://github.com/tran-engineering/openshift-workshop-nodejs-example --name kt-nodejs-example`
+`oc new-build https://github.com/tran-engineering/openshift-workshop-nodejs-example --name nodejs-app`
 
 * Builder image: registry.access.redhat.com/rhscl/nodejs-8-rhel7 (parsed from Dockerfile)
 * Source: https://github.com/tran-engineering/openshift-workshop-nodejs-example
 * Strategy: docker
 
----
+----
 
 ## Openshift: Build commands
 
@@ -191,11 +213,9 @@ https://docs.openshift.com/container-platform/3.7/rest_api/apis-build.openshift.
 
 `oc delete bc/my-build`
 
-`oc new-build --help`
+`oc set env bc/my-app SOME_ENV=hello`
 
-`oc start-build --help`
-
-`oc env bc/my-app SOME_ENV=hello`
+`oc describe bc/my-build`
 
 ---
 
@@ -209,17 +229,18 @@ An Openshift deployment runs a specific image.
 
 * Image to run (usually an Imagestream + Tag)
 * Environment variables in the running Pod
-* Triggers (ImageChange / ConfigChange)
+* Triggers (Image changes / DeploymentConfig changes)
 * Exposed ports (Usually derived from Dockerfile)
-* Resource limits (CPU / Memory)
-* Liveliness / Readiness probes
-* Deployment strategy (Rolling, Recreate, Custom)
+* **Resource limits** (CPU / Memory)
+* **Liveliness / Readiness probes**
+* **Deployment strategy** (Rolling, Recreate)
 
 ----
 
-## Openshift Deployment: Triggers
+## Resource Limits
 
-By default, a new Deployment is triggered when the `ImageStreamTag` points to a new image or the `DeploymentConfig` has changed.
+The platform usually sets default limits.
+Openshift will *kill* processes that use memory.
 
 ----
 
@@ -239,22 +260,14 @@ If the Readiness probe fails, the container won't receive any traffic from the l
 * Container command
 * TCP Socket
 
-----
-
-## Resource Limits
-
-The platform usually sets default limits.
-Openshift will *kill* processes that use memory.
 
 ----
 
 ## Deployment strategies
 
-* Rolling (default) - scales up the new replication controller in stages, gradually reducing the number of old pods. If one of the new deployed pods never becomes "ready", the new rollout will be rolled back (scaled down to zero). Use when your application can tolerate two versions of code running at the same time (many web applications, scalable databases)  
+* Rolling (default) - Use when your application can tolerate two versions of code running at the same time (many web applications, scalable databases)  
 
-* Recreate - scales the old replication controller down to zero, then scales the new replication controller up to full. Use when your application cannot tolerate two versions of code running at the same time.
-
-* Custom - run your own deployment process inside a Docker container using your own scripts.
+* Recreate - Use when your application cannot tolerate two versions of code running at the same time (database schema changes, migrations, ...)
 
 ----
 
@@ -282,7 +295,7 @@ https://docs.openshift.com/container-platform/3.11/dev_guide/compute_resources.h
 
 `oc new-app -i my-app -e SOME_ENV=hello`
 
-`oc env dc/my-app SOME_ENV=hello`
+`oc set env dc/my-app SOME_ENV=hello`
 
 ---
 
@@ -290,7 +303,7 @@ https://docs.openshift.com/container-platform/3.11/dev_guide/compute_resources.h
 
 https://docs.openshift.com/container-platform/3.10/architecture/core_concepts/pods_and_services.html#services
 
-Internal Load Balancer. Proxies using an internal proxy ip to the concrete pods.
+Internal Load Balancer. Maps an internal ip to the concrete pods.
 Service ports are inferred when the deployment config is created.
 
 ---
@@ -311,3 +324,6 @@ https://docs.openshift.com/container-platform/3.10/dev_guide/index.html
 
 Strongly recommended to read!
 
+---
+
+## Questions
