@@ -22,11 +22,13 @@ https://console.os1.balgroupit.com/console/command-line
 
 ---
 
-## Useful basic commands (for developers)
+## Oh shit I messed up! Let's start from scratch
 
-`oc login [URL]`
-`oc status`
-`oc whoami`
+Check that you are in the correct project:
+
+`oc project`
+
+`oc delete all --all`
 
 ---
 
