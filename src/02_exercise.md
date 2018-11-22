@@ -230,3 +230,9 @@ Create bc+dc using `oc new-app`:
 
 Create only bc using `oc new-build`:
 `oc new-build httpd~https://bitbucket.balgroupit.com/scm/ows/static-site.git --source-secret=bitbucket --name=anothersite`
+
+----
+
+## Apply secrets automatically
+
+`oc annotate secret bitbucket 'build.openshift.io/source-secret-match-uri-1=https://bitbucket.galgroupit.com/*'`

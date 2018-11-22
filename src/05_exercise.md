@@ -137,5 +137,3 @@ or shorthand
 
 `oc new-app --template=django-psql-example`
 
----
-

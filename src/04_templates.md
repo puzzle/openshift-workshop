@@ -62,3 +62,21 @@ Maybe allow the user to define:
 
 ---
 
+## Openshift assistance for templates
+
+The good:
+
+`oc export --raw --as-template=myapp svc,dc,bc,is,route -o yaml`
+
+----
+
+The bad:
+
+It's deprecated. But (currently) no equivalent successor.
+
+----
+
+The ugly:
+
+It checks only syntax.
+That's almost all help from Openshift.
