@@ -140,7 +140,7 @@ Trigger a build:
 
 `oc start-build static-site --from-dir=. --follow`
 
-Will build an image and store in the `ImageStream` "kt-static-site" and tag it with "latest".
+Will build an image and store in the `ImageStream` "static-site" and tag it with "latest".
 
 ----
 
