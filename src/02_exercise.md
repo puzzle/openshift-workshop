@@ -10,7 +10,7 @@
 
 ### Install the Openshift Client (oc)
 
-https://console.os1.balgroupit.com/console/command-line
+https://OPENSHIFT-NODE/console/command-line
 
 ---
 
@@ -224,15 +224,15 @@ Create a secret:
 ----
 
 Create bc+dc using `oc new-app`:
-`oc new-app --source-secret=bitbucket httpd~https://bitbucket.balgroupit.com/scm/ows/static-site.git`
+`oc new-app --source-secret=bitbucket httpd~https://PRIVATE-GIT-REPO/static-site.git`
 
 ----
 
 Create only bc using `oc new-build`:
-`oc new-build httpd~https://bitbucket.balgroupit.com/scm/ows/static-site.git --source-secret=bitbucket --name=anothersite`
+`oc new-build httpd~https://PRIVATE-GIT-REPO/static-site.git --source-secret=bitbucket --name=anothersite`
 
 ----
 
 ## Apply secrets automatically
 
-`oc annotate secret bitbucket 'build.openshift.io/source-secret-match-uri-1=https://bitbucket.galgroupit.com/*'`
+`oc annotate secret bitbucket 'build.openshift.io/source-secret-match-uri-1=https://PRIVATE-GIT-REPO/*'`
