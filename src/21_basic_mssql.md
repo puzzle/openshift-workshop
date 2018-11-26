@@ -16,6 +16,8 @@ https://developers.redhat.com/blog/2018/09/25/sql-server-on-openshift/
 
 `oc create -f https://raw.githubusercontent.com/tmds/dotnet-mssql-ex/master/openshift/imagestreams.json`
 
+`oc create -f https://raw.githubusercontent.com/tmds/dotnet-mssql-ex/master/openshift/template.json`
+
 `oc create -f https://raw.githubusercontent.com/tran-engineering/mssql-ephemeral-template/master/mssql-ephemeral.json`
 
 ---
