@@ -18,4 +18,4 @@ tran@puzzle.ch
 
 ---
 
-## Have a nice weekend
+## Thank you!
