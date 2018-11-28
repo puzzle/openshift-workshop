@@ -10,8 +10,6 @@
 
 `oc new-app jenkins-ephemeral`
 
-`oc new-app jenkins-persistent`
-
 Setups a Jenkins with Openshift Authentication (using OAuth2)
 
 ---
@@ -97,6 +95,10 @@ pipeline {
 ```
 
 https://github.com/openshift/jenkins-client-plugin
+
+---
+
+## Useful: Pipeline Snippet Generator
 
 ---
 

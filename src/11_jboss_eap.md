@@ -6,11 +6,23 @@
 
 ---
 
+### Day 2
+
+* Openshift + JBoss EAP
+* Exercises
+
+* Jenkins
+* Exercises
+
+<!-- .slide: class="master03" -->
+
+---
+
 ## Common use case
 
 Artifacts are already built and available on Nexus / Artifactory.
 
-The goal is to deploy an application using prebuilt artifacts.
+The goal is to deploy an application using **prebuilt artifacts**.
 
 ---
 
@@ -87,4 +99,13 @@ All files in `./modules` are copied to `$EAP_HOME/modules`
 `oc new-build registry.access.redhat.com/jboss-eap-7/eap71-openshift~. --name jboss-app`
 
 2. Create *DeploymentConfig*, *Routes*, etc.
+
+---
+
+## Links
+
+[JBoss EAP S2I Documentation](https://access.redhat.com/documentation/en-us/red_hat_jboss_enterprise_application_platform/7.0/html/red_hat_jboss_enterprise_application_platform_for_openshift/)
+
+
+[Customizing S2I Build](https://access.redhat.com/documentation/en-us/red_hat_jboss_enterprise_application_platform/7.0/html/red_hat_jboss_enterprise_application_platform_for_openshift/reference_information#reference_s2i)
 

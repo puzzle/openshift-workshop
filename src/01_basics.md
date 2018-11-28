@@ -36,9 +36,11 @@ https://puzzle.github.io/openshift-workshop
 
 ### Day 2
 
-* Jenkins
-* CI/CD
 * Openshift + JBoss EAP
+* Exercises
+
+* Jenkins
+* Exercises
 
 <!-- .slide: class="master03" -->
 
