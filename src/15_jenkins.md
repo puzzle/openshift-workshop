@@ -98,7 +98,20 @@ https://github.com/openshift/jenkins-client-plugin
 
 ---
 
-## Useful: Pipeline Snippet Generator
+## Links & Tips:
+
+* Documentation somewhat lacking
+* Somehwat useful: Pipeline Snippet Generator
+
+https://github.com/openshift/jenkins-client-plugin
+
+---
+
+## Example pipelines
+
+https://github.com/openshift/jenkins-client-plugin#examples
+
+https://github.com/openshift/origin/tree/master/examples/jenkins/pipeline
 
 ---
 
