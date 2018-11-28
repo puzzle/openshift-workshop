@@ -24,7 +24,7 @@ The goal is to deploy an application using prebuilt artifacts.
 
 ## Repetition: S2I Workflow
 
-1. Builder image: jboss-eap71
+1. Builder image: *registry.access.redhat.com/jboss-eap-7/eap71-openshift*
 2. Assemble step: Results in image
 3. Run step: Started by Openshift
 
@@ -38,19 +38,23 @@ S2I Scripts are checking for a `pom.xml` file.
 
 If present, `mvn build -DskipTests` is run.
 
-Artifacts (.jar, .war, .ear) are copied from `target` directory to `$EAP_HOME/standalone/deployments` directory.
+----
+
+After the build:
+
+Artifacts (.jar, .war, .ear) are then copied from `target` directory to `$EAP_HOME/standalone/deployments` directory.
 
 ---
 
 ## Step 2
 
-Artifacts (.jar, .war, .ear) are copied from `./` to `$EAP_HOME/standalone/deployments` directory.
+Artifacts are copied from `./` to `$EAP_HOME/standalone/deployments` directory.
 
 ---
 
 ## Step 3
 
-Artifacts (.jar, .war, .ear) are copied from `./deployments` to `$EAP_HOME/standalone/deployments` directory.
+Artifacts are copied from `./deployments` to `$EAP_HOME/standalone/deployments` directory.
 
 ---
 
@@ -77,7 +81,10 @@ All files in `./modules` are copied to `$EAP_HOME/modules`
 
 ---
 
-## How to use: Create a new BuildConfig and trigger a build
+## How to use: Create Deployment using S2I
 
+1. Create *BuildConfig*
 `oc new-build registry.access.redhat.com/jboss-eap-7/eap71-openshift~. --name jboss-app`
+
+2. Create *DeploymentConfig*, *Routes*, etc.
 

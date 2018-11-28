@@ -16,11 +16,15 @@
 
 ## Exercise 1: Gather the artifacts
 
-Clone the artifacts from 
+Clone pre-built artifacts from 
 
-https://bitbucket.balgroupit.com/projects/OWS/repos/sample-deployments
+`git clone ssh://git@bitbucket.balgroupit.com/ows/sample-deployments.git`
 
-Note: in a real world situation, you should get artifacts from Nexus / Artifactory.
+or
+
+`git clone https://bitbucket.balgroupit.com/scm/ows/sample-deployments.git`
+
+*in a real world situation, you should get these artifacts from Nexus / Artifactory.
 
 ---
 
@@ -30,13 +34,13 @@ Create a directory:
 
 `mkdir jboss-app`
 
-----
-
-Put `sample.war` and `openshift-tasks.war` in *deployments* directory.
+Copy `sample.war` and `openshift-tasks.war` in *deployments* directory.
 
 ----
 
 Rename `openshift-tasks.war` to `ROOT.war`
+
+In order to make *openshift-tasks.war* display at the `/`
 
 ---
 
@@ -64,7 +68,7 @@ Make sure you are in the *jboss-app* directory.
 
 Try to use either WebConsole or *oc*
 
-Note: Please create an unsecure route, since the deployment *openshift_tasks.jar* botched up its frontend code.
+Hint: Please create an *unsecured route*, since the deployment *openshift_tasks.jar* doesn't support https.
 
 ---
 
@@ -83,7 +87,6 @@ Add a readiness probe using the web console:
 * Port: **8080**
 * Initial Delay: **60**
 * Timeout: **5**
-
 
 ---
 
@@ -109,11 +112,13 @@ Note:
 
 Try to figure out the parameters yourself!
 
-Note: Safe values for this deployment: `cpu=200m,memory=1596Mi`
+Hint: Safe values for this deployment: `cpu=200m,memory=1024Mi`
 
 (optional) Try to set resource limits on the web console.
 
-Note: `oc set resources dc/jboss-app --limits=cpu=500m,memory=1536Mi`
+Note:
+
+`oc set resources dc/jboss-app --limits=cpu=200m,memory=1024Mi`
 
 ---
 

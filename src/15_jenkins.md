@@ -1,4 +1,4 @@
-# Openshift Workshop: Jenkins
+# Openshift Workshop: Jenkins CI/CD with Openshift
 
 <small>tran@puzzle.ch</small>
 
@@ -33,16 +33,20 @@ Setups a Jenkins with Openshift Authentication (using OAuth2)
 
 ---
 
-## One Jenkins vs Multiple Jenkins on Openshift
+## Jenkins and Openshift: Endless possibilities
 
-One:
-* Easier to maintain
-* Easier to deploy Jenkins specific libaries
-* Uses less resources
+* Freestyle Projects
+* Pipeline Projects
+* Multibranch Pipeline Projects
 
-Multiple:
-* More power to developers
-* Less clutter
+* Openshift ImageStream as SCM (trigger jobs)
+
+----
+
+## Pipeline Views in Openshift
+
+* Provide pipeline script directly in BuildConfig
+* Pipeline scripts from GIT repostory
 
 ---
 
@@ -73,8 +77,6 @@ https://jenkins.io/doc/book/pipeline/syntax/
 
 ## Openshift Plugin for Pipeline Scripts
 
-https://github.com/openshift/origin/blob/master/examples/jenkins/pipeline/nodejs-sample-pipeline.yaml
-
 ```groovy
 pipeline {
     agent {
@@ -94,26 +96,66 @@ pipeline {
 }
 ```
 
+https://github.com/openshift/jenkins-client-plugin
+
 ---
 
-## Openshift Jenkins Pipeline DSL
+## Notable commands
 
-https://github.com/openshift/jenkins-plugin#jenkins-pipeline-formerly-workflow-plugin
+### openshift.verbose()
+
+Turns on details about Openshift Interactions
+
+*openshift.verbose(false)* turns it off
 
 ----
 
-## Commands
+### Process templates
 
-* openshiftBuild
-* openshiftDeploy
-* openshiftExec
-* openshiftCreateResource
-* openshiftDeleteResourceByJsonYaml
-* openshiftDeleteResourceByLabels
-* openshiftDeleteResourceByKey
-* openshiftScale
-* openshiftTag
-* openshiftVerifyBuild
-* openshiftVerifyDeployment
-* openshiftVerifyService
-* openshiftImageStream
+```groovy
+def models = openshift.process("openshift//httpd-example", '-p', 'HELLO_MSG=hello')
+openshift.create(models)
+```
+
+----
+
+### openshift.newApp()
+
+```groovy
+openshift.newApp('httpd-example')
+```
+
+----
+
+## narrow() on selections
+
+```groovy
+def all = openshift.newApp('httpd-example')
+def bc = all.narrow('bc')
+bc.metadata.labels['somelabel'] = 'foo'
+openshift.apply(bc)
+```
+
+----
+
+## selections
+
+```groovy
+def all = openshift.selector('all', [app: 'jboss-app'])
+if (all.exists()) {
+    all.delete()
+}
+```
+
+---
+
+## openshift.raw()
+
+The plugin doesn't support everything.
+But you can still do unsupported actions with *openshift.raw()* or `sh 'oc ...'`
+
+```groovy
+// The following is equivalent
+openshift.raw('get all --all')
+sh 'oc get all --all'
+```
