@@ -48,7 +48,7 @@ This creates a Jenkins Server.
 
 ----
 
-2. Insert script below:
+2. Insert script below (click to copy):
 
 ```groovy
 pipeline {
