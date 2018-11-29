@@ -18,14 +18,14 @@ Setups a Jenkins with Openshift Authentication (using OAuth2)
 
 * Authentication using Openshift OAUTH2
 * Preconfigured Openshift Plugin and Access Tokens for Openshift
-* Predefined Kubernetes plugin: *maven* and *nodejs* (see Manage Jenkins --> Configure System --> Kubernetes Pod Templates) with autoscaling
+* Predefined Kubernetes plugin: Automatic creation and disposal of slaves
 * Jenkins SCM for ImageStreams
 
 ---
 
 ## OAUTH2 with Openshift
 
-* Openshift Role: **admin** can Administrate Jenkins
+* Openshift Role: **admin** can administrate / configure Jenkins itself
 * Openshift Role: **edit** can create/edit Jenkins jobs, run builds
 * Openshift Role: **view** can only view builds
 
@@ -39,9 +39,38 @@ Setups a Jenkins with Openshift Authentication (using OAuth2)
 
 * Openshift ImageStream as SCM (trigger jobs)
 
+---
+
+## Customize Jenkins
+
+https://docs.openshift.com/container-platform/3.11/using_images/other_images/jenkins.html
+
 ----
 
-## Pipeline Views in Openshift
+ENV:
+* Automatic install of plugins
+* Slave Images for Maven and NodeJS nodes
+
+----
+
+S2I: 
+* Automatic install of plugins
+* Predefined jobs
+* config.xml / credentials.xml
+
+---
+
+## Autodetection of jenkins slaves
+
+* Default: *maven* + *nodejs*
+
+* *ImageStream* with role *jenkins-slave*
+* *ImageStreamTags* with role *jenkins-slave*
+* *ConfigMaps* with role *jenkins-slave*
+
+---
+
+## Pipeline builds in Openshift
 
 * Provide pipeline script directly in BuildConfig
 * Pipeline scripts from GIT repostory
