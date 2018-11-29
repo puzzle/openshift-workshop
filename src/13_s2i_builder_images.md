@@ -52,3 +52,9 @@ https://github.com/nodeshift/nodeshift
 ## Ruby S2I
 
 https://access.redhat.com/containers/?tab=overview#/registry.access.redhat.com/rhscl/ruby-24-rhel7
+
+---
+
+## Discussion
+
+Would you use S2I builds?
