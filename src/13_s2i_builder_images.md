@@ -1,4 +1,4 @@
-# Openshift Workshop: Openshift JBoss EAP using S2I
+# Openshift Workshop: S2I builder images
 
 <small>tran@puzzle.ch</small>
 
