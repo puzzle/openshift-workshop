@@ -30,15 +30,13 @@ The goal is to deploy an application using **prebuilt artifacts**.
 
 * Generic docker build and store the image on a private registry.
 * Openshift build with --strategy=docker
-* **Openshift build with --strategy=source + JBoss EAP**
+* **Openshift S2I build with JBoss EAP Image**
 
 ---
 
 ## Repetition: S2I Workflow
 
-1. Builder image: *registry.access.redhat.com/jboss-eap-7/eap71-openshift*
-2. Assemble step: Results in image
-3. Run step: Started by Openshift
+![S2i](img/s2i.png)
 
 ---
 
