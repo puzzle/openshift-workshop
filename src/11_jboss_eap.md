@@ -40,7 +40,15 @@ The goal is to deploy an application using **prebuilt artifacts**.
 
 ---
 
-## JBoss EAP S2I assemble step
+## JBoss EAP S2I
+
+Contents of the S2I image:
+
+* Maven
+* JBoss EAP 7.1
+* S2I scripts
+
+---
 
 ### Step 1
 
