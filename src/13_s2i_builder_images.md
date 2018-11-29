@@ -57,4 +57,6 @@ https://access.redhat.com/containers/?tab=overview#/registry.access.redhat.com/r
 
 ## Discussion
 
+Questions?
+
 Would you use S2I builds?
