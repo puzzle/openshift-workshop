@@ -175,7 +175,7 @@ Run your pipeline. Does it work properly?
 
 ---
 
-## Exercise 7: Leverage Openshift Builds with --strategy=pipeline
+## Exercise 7: Leverage Openshift pipeline builds
 
 Create a file called *`pipeline-in-openshift.yaml*:
 
