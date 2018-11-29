@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+        <title>reveal-md</title>
+        <link rel="stylesheet" href="./css/reveal.css">
+        <link rel="stylesheet" href="https://keetraxx.github.io/pitc-revealjs-theme/puzzle.css" id="theme">
+        <link rel="stylesheet" href="./css/highlight/zenburn.css">
+        <link rel="stylesheet" href="./css/print/paper.css" type="text/css" media="print">
+
+
+    </head>
+    <body>
+
+        <div class="reveal">
+            <div class="slides"><section  data-markdown><script type="text/template"># Openshift Workshop: S2I
+
+<small>tran@puzzle.ch</small>
+
+<!-- .slide: class="master01" -->
+</script></section><section  data-markdown><script type="text/template">
+## Source-to-Image (S2I) Framework
+
+https://docs.openshift.com/container-platform/3.11/creating_images/s2i.html
+
+Creating S2I images out of scope in this workshop.
+</script></section><section  data-markdown><script type="text/template">
+## S2I workflow
+
+S2I images are used in Openshift for **Builds** with *--strategy=source.*
+
+The goal is to produce an **image** that runs the application.
+
+S2I Builder Image + User supplied source => Image
+</script></section><section  data-markdown><script type="text/template">
+## Remember the exercise?
+
+`oc new-build --binary registry.access.redhat.com/rhscl/httpd-24-rhel7 --name=static-site`
+
+results in a S2I build.
+
+`oc start-build static-site --from-dir=.`
+
+uploads directory `.` as S2I context.
+</script></section><section ><section data-markdown><script type="text/template">
+## What happened (very simplified!)
+
+* registry.access.redhat.com/rhscl/httpd-24-rhel7 is a S2I ready image. https://github.com/sclorg/httpd-container
+
+* We defined a openshift new-build that uses this S2I image. The S2I Image has already all the scripts baked in.
+
+* During the build (S2I assemble script), the user supplied source (`--from-dir=.`) is copied to `/opt/app-root/src`
+</script></section><section data-markdown><script type="text/template">
+* The Apache configuration is (`/etc/httpd/conf/httpd.conf`) is modified (mainly DocumentRoot is set to `/opt/app-root/src`)
+
+* The finished image is pushed into the internal Openshift registry **/NAMESPACE/static-site:latest**
+
+* (Deployments will be triggered, if they were pointing to the image)
+
+* (During deployment, the **S2I run script** will be run)
+</script></section></section><section  data-markdown><script type="text/template">
+## RedHat provided S2I images
+
+https://access.redhat.com/containers/?count=10#/category/Builder%20Image
+</script></section><section ><section data-markdown><script type="text/template">
+## JBoss EAP for Openshift
+
+[General documentation: JBoss Enterprise Application Platform for OpenShift](https://access.redhat.com/documentation/en-us/red_hat_jboss_enterprise_application_platform/7.1/html/red_hat_jboss_enterprise_application_platform_for_openshift/)
+
+
+[S2I Chapter: JBoss Enterprise Application Platform for OpenShift](https://access.redhat.com/documentation/en-us/red_hat_jboss_enterprise_application_platform/7.1/html/red_hat_jboss_enterprise_application_platform_for_openshift/reference_information#reference_s2i)
+</script></section><section data-markdown><script type="text/template">
+## Customize your EAP
+
+* Configuration: `configuration/standalone-openshift.xml`
+* Modules: `modules/...`
+* Artifacts: `deployments/*.war|ear|jar` (copied to $JBOSS_HOME/deployments/)
+</script></section></section></div>
+        </div>
+
+        <script src="./lib/js/head.min.js"></script>
+        <script src="./js/reveal.js"></script>
+
+        <script>
+            function extend() {
+              var target = {};
+              for (var i = 0; i < arguments.length; i++) {
+                var source = arguments[i];
+                for (var key in source) {
+                  if (source.hasOwnProperty(key)) {
+                    target[key] = source[key];
+                  }
+                }
+              }
+              return target;
+            }
+
+            // Optional libraries used to extend on reveal.js
+            var deps = [
+              { src: './lib/js/classList.js', condition: function() { return !document.body.classList; } },
+              { src: './plugin/markdown/marked.js', condition: function() { return !!document.querySelector('[data-markdown]'); } },
+              { src: './plugin/markdown/markdown.js', condition: function() { return !!document.querySelector('[data-markdown]'); } },
+              { src: './plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+              { src: './plugin/zoom-js/zoom.js', async: true },
+              { src: './plugin/notes/notes.js', async: true },
+              { src: './plugin/math/math.js', async: true }
+            ];
+
+            // default options to init reveal.js
+            var defaultOptions = {
+              controls: true,
+              progress: true,
+              history: true,
+              center: true,
+              transition: 'default', // none/fade/slide/convex/concave/zoom
+              dependencies: deps
+            };
+
+            // options from URL query string
+            var queryOptions = Reveal.getQueryHash() || {};
+
+            var options = {};
+            options = extend(defaultOptions, options, queryOptions);
+        </script>
+
+          <script src="./assets/src/scripts/code-copy.js"></script>
+
+        <script>
+          Reveal.initialize(options);
+        </script>
+    </body>
+</html>

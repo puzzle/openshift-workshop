@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+        <title>reveal-md</title>
+        <link rel="stylesheet" href="./css/reveal.css">
+        <link rel="stylesheet" href="https://keetraxx.github.io/pitc-revealjs-theme/puzzle.css" id="theme">
+        <link rel="stylesheet" href="./css/highlight/zenburn.css">
+        <link rel="stylesheet" href="./css/print/paper.css" type="text/css" media="print">
+
+
+    </head>
+    <body>
+
+        <div class="reveal">
+            <div class="slides"><section  data-markdown><script type="text/template"># Openshift Workshop: Jenkins CI/CD with Openshift Exercises
+
+<small>tran@puzzle.ch</small>
+
+<!-- .slide: class="master01" -->
+</script></section><section  data-markdown><script type="text/template">
+## Exercise 1: Setup your Jenkins
+
+`oc new-app jenkins-ephemeral`
+
+This creates a Jenkins Server.
+</script></section><section ><section data-markdown><script type="text/template">
+## Exercise 2: Freestyle project: Openshift Create
+
+1. Login to your jenkins using your Openshift Credentials.
+2. Create a freestyle project called *freestyle-create*
+3. Add a build step *"Create OpenShift resource(s)"*
+</script></section><section data-markdown><script type="text/template">
+4. Insert into the *json/yaml field* the output of `oc new-app httpd -o yaml`
+5. Build your *freestyle-create* project
+6. Check the console output of your build
+</script></section></section><section ><section data-markdown><script type="text/template">
+## Exercise 3: Freestyle project: Openshift Delete
+
+1. Create a freestyle project called *freestyle-delete*
+2. Create a build *"Delete Openshift resources by key"* step that deletes your `ImageStream` (*is/static-site*)
+3. Create an additional build step *"Delete Openshift resources by label"* that deletes all objects with label app=static-site
+</script></section><section data-markdown><script type="text/template">
+4. Build your *freestyle-delete* project
+5. Check the console output of your build
+6. Check the web console if the resources have been deleted
+</script></section></section><section ><section data-markdown><script type="text/template">
+## Exercise 4: Hello World pipeline project
+
+1. Create a pipeline project called *pipeline-create*
+</script></section><section data-markdown><script type="text/template">
+2. Insert script below (click to copy):
+
+```groovy
+pipeline {
+  agent {
+    node {
+      label 'maven' 
+    }
+  }
+  options {
+    timeout(time: 10, unit: 'MINUTES') 
+  }
+  stages {
+    stage('hello') {
+      steps {
+        script {
+          openshift.withCluster() {
+            openshift.withProject() {
+              echo "Hello from project: ${openshift.project()}"
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```</script></section></section><section ><section data-markdown><script type="text/template">
+## Exercise 5: Pipeline Create
+
+In your previous pipeline script,
+add a new stage *cleanup*:
+
+```groovy
+stage('cleanup') {
+    steps {
+        script {
+            openshift.withCluster() {
+                openshift.withProject() {
+                    def httpdExample = openshift.selector("all", [ template : 'httpd-example' ])
+                    if (httpdExample.exists()) {
+                        httpdExample.delete()
+                    }
+                }
+            }
+        }
+    }
+}
+```</script></section><section data-markdown><script type="text/template">
+Add a new stage *create*:
+
+```groovy
+stage('create') {
+    steps {
+        script {
+            openshift.withCluster() {
+                openshift.withProject() {
+                    def models = openshift.process( "openshift//httpd-example")
+                    openshift.create(models)
+                }
+            }
+        }
+    }
+}
+```
+</script></section><section data-markdown><script type="text/template">
+Run your pipeline and check if your deployment has been created successfully.
+</script></section></section><section ><section data-markdown><script type="text/template">
+## Exercise 6: Wait for builds and deployments
+
+Add a new stage:
+
+```groovy
+stage('waitForBuild') {
+    steps {
+        script {
+            openshift.withCluster() {
+                openshift.withProject() {
+                    def builds = openshift.selector("bc", "httpd-example").related('builds')
+                    builds.untilEach(1) {
+                        return (it.object().status.phase == "Complete")
+                    }
+                }
+            }
+        }
+    }
+}
+```
+</script></section><section data-markdown><script type="text/template">
+Add a new stage:
+
+```groovy
+stage('waitForDeployment') {
+    steps {
+        script {
+            openshift.withCluster() {
+                openshift.withProject() {
+                    openshift.selector("dc", "httpd-example").related('pods').untilEach(1) {
+                        return (it.object().status.phase == "Running")
+                    }
+                }
+            }
+        }
+    }
+}
+stage('AfterDeployment') {
+    steps {
+        echo "Everything is ready! Maybe run some tests?"
+    }
+}
+```
+</script></section><section data-markdown><script type="text/template">
+Run your pipeline. Does it work properly?
+</script></section></section><section ><section data-markdown><script type="text/template">
+## Exercise 7: Leverage Openshift pipeline builds
+
+Create a file called *`pipeline-in-openshift.yaml*:
+
+```yaml
+kind: "BuildConfig"
+apiVersion: "v1"
+metadata:
+  name: "pipeline-in-openshift"
+spec:
+  strategy:
+    jenkinsPipelineStrategy:
+      jenkinsfile: |
+        pipeline {
+            agent {
+                node {
+                    label 'maven' 
+                }
+            }
+            options {
+                timeout(time: 10, unit: 'MINUTES') 
+            }
+            stages {
+                stage('hello') {
+                    steps {
+                        script {
+                            openshift.withCluster() {
+                                openshift.withProject() {
+                                    echo "Hello from project: ${openshift.project()}"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+```
+</script></section><section data-markdown><script type="text/template">
+Import the build configuration in Openshift:
+
+`oc create -f pipeline-in-openshift.yaml`
+</script></section><section data-markdown><script type="text/template">
+Check the build in the openshift web console:
+
+Builds --> Pipeline
+</script></section><section data-markdown><script type="text/template">
+Start the build manually using the web console. Or using `oc`:
+
+`oc start-build pipeline-in-openshift`
+</script></section></section><section ><section data-markdown><script type="text/template">
+## Exercise 8: Create a pipeline build from GIT
+
+Create a secret:
+
+`oc create secret generic --type=kubernetes.io/basic-auth --from-literal=username=kaynewest --from-literal=password=00000000 bitbucket`
+</script></section><section data-markdown><script type="text/template">
+Annotate the secret:
+
+`oc annotate secret bitbucket build.openshift.io/source-secret-match-uri-1=https://bitbucket.balgroupit.com/*`
+</script></section><section data-markdown><script type="text/template">
+`oc new-build https://bitbucket.balgroupit.com/scm/ows/pipeline-from-git.git --strategy=pipeline`
+
+(Somehow *oc* client asks for password twice?)
+</script></section><section data-markdown><script type="text/template">
+Check your build in the web console</script></section></section></div>
+        </div>
+
+        <script src="./lib/js/head.min.js"></script>
+        <script src="./js/reveal.js"></script>
+
+        <script>
+            function extend() {
+              var target = {};
+              for (var i = 0; i < arguments.length; i++) {
+                var source = arguments[i];
+                for (var key in source) {
+                  if (source.hasOwnProperty(key)) {
+                    target[key] = source[key];
+                  }
+                }
+              }
+              return target;
+            }
+
+            // Optional libraries used to extend on reveal.js
+            var deps = [
+              { src: './lib/js/classList.js', condition: function() { return !document.body.classList; } },
+              { src: './plugin/markdown/marked.js', condition: function() { return !!document.querySelector('[data-markdown]'); } },
+              { src: './plugin/markdown/markdown.js', condition: function() { return !!document.querySelector('[data-markdown]'); } },
+              { src: './plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+              { src: './plugin/zoom-js/zoom.js', async: true },
+              { src: './plugin/notes/notes.js', async: true },
+              { src: './plugin/math/math.js', async: true }
+            ];
+
+            // default options to init reveal.js
+            var defaultOptions = {
+              controls: true,
+              progress: true,
+              history: true,
+              center: true,
+              transition: 'default', // none/fade/slide/convex/concave/zoom
+              dependencies: deps
+            };
+
+            // options from URL query string
+            var queryOptions = Reveal.getQueryHash() || {};
+
+            var options = {};
+            options = extend(defaultOptions, options, queryOptions);
+        </script>
+
+          <script src="./assets/src/scripts/code-copy.js"></script>
+
+        <script>
+          Reveal.initialize(options);
+        </script>
+    </body>
+</html>

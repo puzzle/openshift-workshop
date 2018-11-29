@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+        <title>reveal-md</title>
+        <link rel="stylesheet" href="./css/reveal.css">
+        <link rel="stylesheet" href="https://keetraxx.github.io/pitc-revealjs-theme/puzzle.css" id="theme">
+        <link rel="stylesheet" href="./css/highlight/zenburn.css">
+        <link rel="stylesheet" href="./css/print/paper.css" type="text/css" media="print">
+
+
+    </head>
+    <body>
+
+        <div class="reveal">
+            <div class="slides"><section  data-markdown><script type="text/template"># Openshift Workshop: Jenkins CI/CD with Openshift
+
+<small>tran@puzzle.ch</small>
+
+<!-- .slide: class="master01" -->
+</script></section><section  data-markdown><script type="text/template">
+## Setup Jenkins on Openshift
+
+`oc new-app jenkins-ephemeral`
+
+Setups a Jenkins with Openshift Authentication (using OAuth2)
+</script></section><section  data-markdown><script type="text/template">
+## Using Openshift shipped Jenkins
+
+* Authentication using Openshift OAUTH2
+* Preconfigured Openshift Plugin and Access Tokens for Openshift
+* Predefined Kubernetes plugin: Automatic creation and disposal of slaves
+* Jenkins SCM for ImageStreams
+</script></section><section  data-markdown><script type="text/template">
+## OAUTH2 with Openshift
+
+* Openshift Role: **admin** can administrate / configure Jenkins itself
+* Openshift Role: **edit** can create/edit Jenkins jobs, run builds
+* Openshift Role: **view** can only view builds
+</script></section><section  data-markdown><script type="text/template">
+## Jenkins and Openshift: Endless possibilities
+
+* Freestyle Projects
+* Pipeline Projects
+* Multibranch Pipeline Projects
+
+* Openshift ImageStream as SCM (trigger jobs)
+</script></section><section ><section data-markdown><script type="text/template">
+## Customize Jenkins
+
+https://docs.openshift.com/container-platform/3.11/using_images/other_images/jenkins.html
+</script></section><section data-markdown><script type="text/template">
+ENV:
+* Automatic install of plugins
+* Slave Images for Maven and NodeJS nodes
+</script></section><section data-markdown><script type="text/template">
+S2I: 
+* Automatic install of plugins
+* Predefined jobs
+* config.xml / credentials.xml
+</script></section></section><section  data-markdown><script type="text/template">
+## Autodetection of jenkins slaves
+
+* Default: *maven* + *nodejs*
+
+* *ImageStream* with role *jenkins-slave*
+* *ImageStreamTags* with role *jenkins-slave*
+* *ConfigMaps* with role *jenkins-slave*
+</script></section><section  data-markdown><script type="text/template">
+## Pipeline builds in Openshift
+
+* Provide pipeline script directly in BuildConfig
+* Pipeline scripts from GIT repostory
+</script></section><section  data-markdown><script type="text/template">
+## Declarative Pipeline Syntax
+
+```groovy
+pipeline {
+    agent {
+        node 'maven'
+    }
+    stages {
+        stage('Print something') {
+            steps {
+                if (env.BRANCH_NAME == 'master') {
+                    echo 'I only execute on the master branch'
+                } else {
+                    echo 'I execute elsewhere'
+                }
+            }
+        }
+    }
+}
+```
+
+https://jenkins.io/doc/book/pipeline/syntax/
+</script></section><section  data-markdown><script type="text/template">
+## Openshift Plugin for Pipeline Scripts
+
+```groovy
+pipeline {
+    agent {
+        node 'nodejs'
+    }
+    stages {
+        stage('hello') {
+            script {
+                openshift.withCluster() {
+                    openshift.withProject() {
+                        echo "Using project: ${openshift.project()}"
+                    }
+                }
+            }
+        }
+    }
+}
+```
+
+https://github.com/openshift/jenkins-client-plugin
+</script></section><section  data-markdown><script type="text/template">
+## Links & Tips:
+
+* Documentation somewhat lacking
+* Somehwat useful: Pipeline Snippet Generator
+
+https://github.com/openshift/jenkins-client-plugin
+</script></section><section  data-markdown><script type="text/template">
+## Example pipelines
+
+https://github.com/openshift/jenkins-client-plugin#examples
+
+https://github.com/openshift/origin/tree/master/examples/jenkins/pipeline
+</script></section><section ><section data-markdown><script type="text/template">
+## Notable commands
+
+### openshift.verbose()
+
+Turns on details about Openshift Interactions
+
+*openshift.verbose(false)* turns it off
+</script></section><section data-markdown><script type="text/template">
+### Process templates
+
+```groovy
+def models = openshift.process("openshift//httpd-example", '-p', 'HELLO_MSG=hello')
+openshift.create(models)
+```
+</script></section><section data-markdown><script type="text/template">
+### openshift.newApp()
+
+```groovy
+openshift.newApp('httpd-example')
+```
+</script></section><section data-markdown><script type="text/template">
+## narrow() on selections
+
+```groovy
+def all = openshift.newApp('httpd-example')
+def bc = all.narrow('bc')
+bc.metadata.labels['somelabel'] = 'foo'
+openshift.apply(bc)
+```
+</script></section><section data-markdown><script type="text/template">
+## selections
+
+```groovy
+def all = openshift.selector('all', [app: 'jboss-app'])
+if (all.exists()) {
+    all.delete()
+}
+```
+</script></section></section><section  data-markdown><script type="text/template">
+## openshift.raw()
+
+The plugin doesn't support everything.
+But you can still do unsupported actions with *openshift.raw()* or `sh 'oc ...'`
+
+```groovy
+// The following is equivalent
+openshift.raw('get all --all')
+sh 'oc get all --all'
+```
+</script></section><section  data-markdown><script type="text/template">
+## Openshift / Jenkins Reference Architecture
+
+https://access.redhat.com/documentation/en-us/reference_architectures/2017/html/application_cicd_on_openshift_container_platform_with_jenkins/
+</script></section></div>
+        </div>
+
+        <script src="./lib/js/head.min.js"></script>
+        <script src="./js/reveal.js"></script>
+
+        <script>
+            function extend() {
+              var target = {};
+              for (var i = 0; i < arguments.length; i++) {
+                var source = arguments[i];
+                for (var key in source) {
+                  if (source.hasOwnProperty(key)) {
+                    target[key] = source[key];
+                  }
+                }
+              }
+              return target;
+            }
+
+            // Optional libraries used to extend on reveal.js
+            var deps = [
+              { src: './lib/js/classList.js', condition: function() { return !document.body.classList; } },
+              { src: './plugin/markdown/marked.js', condition: function() { return !!document.querySelector('[data-markdown]'); } },
+              { src: './plugin/markdown/markdown.js', condition: function() { return !!document.querySelector('[data-markdown]'); } },
+              { src: './plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+              { src: './plugin/zoom-js/zoom.js', async: true },
+              { src: './plugin/notes/notes.js', async: true },
+              { src: './plugin/math/math.js', async: true }
+            ];
+
+            // default options to init reveal.js
+            var defaultOptions = {
+              controls: true,
+              progress: true,
+              history: true,
+              center: true,
+              transition: 'default', // none/fade/slide/convex/concave/zoom
+              dependencies: deps
+            };
+
+            // options from URL query string
+            var queryOptions = Reveal.getQueryHash() || {};
+
+            var options = {};
+            options = extend(defaultOptions, options, queryOptions);
+        </script>
+
+          <script src="./assets/src/scripts/code-copy.js"></script>
+
+        <script>
+          Reveal.initialize(options);
+        </script>
+    </body>
+</html>
