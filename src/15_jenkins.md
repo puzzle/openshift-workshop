@@ -203,3 +203,9 @@ But you can still do unsupported actions with *openshift.raw()* or `sh 'oc ...'`
 openshift.raw('get all --all')
 sh 'oc get all --all'
 ```
+
+---
+
+## Openshift / Jenkins Reference Architecture
+
+https://access.redhat.com/documentation/en-us/reference_architectures/2017/html/application_cicd_on_openshift_container_platform_with_jenkins/
