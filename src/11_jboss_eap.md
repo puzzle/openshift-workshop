@@ -6,6 +6,14 @@
 
 ---
 
+## Workshop resources
+
+https://puzzle.github.io/openshift-workshop
+
+<!-- .slide: class="master02" -->
+
+---
+
 ### Day 2
 
 * Openshift + JBoss EAP
