@@ -237,13 +237,13 @@ Start the build manually using the web console. Or using `oc`:
 
 Create a secret:
 
-`oc create secret generic --type='kubernetes.io/basic-auth' --from-literal=username=kaynewest --from-literal=password=00000000 bitbucket`
+`oc create secret generic --type=kubernetes.io/basic-auth --from-literal=username=kaynewest --from-literal=password=00000000 bitbucket`
 
 ----
 
 Annotate the secret:
 
-`oc annotate secret bitbucket 'build.openshift.io/source-secret-match-uri-1=https://bitbucket.balgroupit.com/*`
+`oc annotate secret bitbucket build.openshift.io/source-secret-match-uri-1=https://bitbucket.balgroupit.com/*`
 
 ----
 
